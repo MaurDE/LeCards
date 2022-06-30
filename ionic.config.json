@@ -1,0 +1,7 @@
+{
+  "name": "LeCards",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
