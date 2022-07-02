@@ -1,67 +1,125 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header :translucent="true">
       <ion-toolbar>
+        <ion-buttons slot="start">
+        <ion-button @click="() => router.push( {name: 'Home'})">
+          <ion-icon :icon="arrowBackOutline"></ion-icon>
+        </ion-button>
+        </ion-buttons>
         <ion-title>Ajustes</ion-title>
       </ion-toolbar>
     </ion-header>
+    
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
           <ion-title size="large">Ajustes</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-button  routerlink= '/views/Tab1Page' > Go to Nueva carta</ion-button>
-      <ExploreContainer name="Ajustes page" />
-
+    
     <ion-list>
-    <ion-item>
-      <ion-label>Activar tiempo limite</ion-label>
-      <ion-toggle @ionchange="tiempoActivo=($event.target.value)" value = checked></ion-toggle>
-    </ion-item>
-    <ion-item v-if="tiempoActivo = true">
-      <ion-label>Tiempo limite</ion-label>
-      <ion-select interface="action-sheet" :interface-options="options">
-        <ion-select-option value="20secs">20 Segundos</ion-select-option>
-        <ion-select-option value="25secs">25 Segundos</ion-select-option>
-        <ion-select-option value="30secs">30 Segundos</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label>Cambiar colores</ion-label>
-      <ion-select interface="action-sheet" :interface-options="options" @ionchange="color=($event.target.value)">
-        <ion-select-option value="clear">Tema Claro</ion-select-option>
-        <ion-select-option value="dark">Tema Oscuro</ion-select-option>
-      </ion-select>
-    </ion-item>
-
+        <ion-item>
+            <ion-label>Activar tiempo limte</ion-label>
+            <ion-toggle slot="end" @ionChange="activarTiempo" :checked="tiempolimite"  ></ion-toggle>
+        </ion-item>
+        <ion-radio-group v-if="tiempolimite" value="20s" @ionChange="cambiarTiempo">
+            <ion-label>20 segundos</ion-label>
+            <ion-radio name="20s" value="20s" slot="end"></ion-radio>
+            <ion-label>25 segundos</ion-label>
+            <ion-radio name="25s" value="25s" slot="end"></ion-radio>
+            <ion-label>30 segundos</ion-label>
+            <ion-radio name="30s" value="30s " slot="end"></ion-radio>
+        </ion-radio-group>
+        
   </ion-list>
-
+      
     </ion-content>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,IonButton,
-    IonItem, 
-    IonList, 
-    IonLabel, 
-    IonToggle  } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonToggle, IonItem, IonRadio,IonRadioGroup } from '@ionic/vue';
+import { defineComponent, ref } from "vue";
+import { useRouter } from 'vue-router';
+import { arrowBackOutline } from "ionicons/icons";
+import app from '../firebase'
+import { getDatabase, ref as storageRef, set } from "firebase/database";
 
 export default defineComponent({
-  name: 'AjustesPage',
-  components: { ExploreContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage,IonButton, 
+  name: 'HomePage',
+  components: {
+    IonContent,
+    IonHeader,
+    IonPage,
+    IonTitle,
+    IonToolbar,
+    IonToggle,
     IonItem, 
-    IonList, 
-    IonLabel, 
-    IonToggle  }
+    IonRadio,
+    IonRadioGroup
+  },
+  setup() {
+    const router = useRouter();
+    const tiempolimite = ref(false);
+    return {tiempolimite,router, arrowBackOutline};
+  },
+  data() {
+      return {
+        color: '',
+        tiempo: '',
+      };
+    },
+  methods: {
+      activarTiempo(){
+        this.tiempolimite = !this.tiempolimite
+        const db = getDatabase();
+               set(storageRef(db, 'ajustes/' + 'ajusteID'), {
+               tiempoActivado: this.tiempolimite,
+               });
+      },
+      cambiarTiempo({ detail }){
+        this.lastEmittedValue = detail.value
+        console.log(this.lastEmittedValue)
+        //firebase magic
+               const db = getDatabase();
+               set(storageRef(db, 'ajustes/' + 'ajusteID'), {
+               tiempoActivado: this.tiempolimite,
+               tiempo: this.lastEmittedValue
+               });
+               //firebase magic
+               //formatear a JSON, añadir a storage
+    }
+  }
 });
-
-var tiempoActivo = false
-var color:string
-
-
-
 </script>
+
+<style scoped>
+#container {
+  text-align: center;
+  
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+  
+  color: #8c8c8c;
+  
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+</style>

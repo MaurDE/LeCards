@@ -1,14 +1,21 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
+import HomePage from '../views/HomePage.vue'
 import Ajustes from '../views/Ajustes.vue'
-import MazosView from '../views/MazosView.vue'
-
+import NuevaCarta from '../views/NuevaCarta.vue'
+import NuevoMazo from '../views/NuevoMazo.vue'
+import RepasoCartas from '../views/RepasoCartas.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/home'
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    meta: { hideNavigation: true },
+    component: HomePage
   },
   {
     path: '/Ajustes',
@@ -16,58 +23,20 @@ const routes: Array<RouteRecordRaw> = [
     component: Ajustes
   },
   {
-    path: '/tabs/',
-    component: TabsPage,
-    children: [
-      {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
-      },
-      {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
-      },
-      {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
-      },
-      {
-        path: 'ListsView',
-        component: () => import('@/views/ListsView.vue')
-      },
-      {
-        path: 'MazosView',
-        component: () => import('@/views/MazosView.vue'),
-        name: 'MazosView',
-      },
-      {
-        path: 'MazosViewa',
-        component: () => import('@/views/MazosViewa.vue'),
-        name: 'MazosViewa',
-      },
-      {
-        path: 'MazosViews',
-        component: () => import('@/views/MazosViews.vue'),
-        name: 'MazosViews',
-      },
-      {
-        path: 'MazosViewd',
-        component: () => import('@/views/MazosViewd.vue'),
-        name: 'MazosViewd',
-      },
-      {
-        path: 'CCarta',
-        component: () => import('@/views/CrearCarta.vue')
-      },
-      {
-        path: 'Ajustes',
-        component: () => import('@/views/Ajustes.vue')
-      },
-      {
-        path: 'CMazo',
-        component: () => import('@/views/CrearMazo.vue')
-      }
-    ]
+    path: '/NuevaCarta',
+    name: 'Nueva carta',
+    component: NuevaCarta  
+  },
+  {
+    path: '/NuevoMazo',
+    name: 'Nuevo mazo',
+    component: NuevoMazo
+  },
+  {
+    path: '/RepasoCartas/:nombre',
+    name: 'Repaso',
+    meta: { hideNavigation: true },
+    component: RepasoCartas
   }
 ]
 
